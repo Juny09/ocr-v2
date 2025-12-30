@@ -1,5 +1,5 @@
 # Use official Python runtime as a parent image
-FROM python:3.10-slim
+FROM python:3.10-slim-bookworm
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -13,12 +13,17 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies
-# libgl1-mesa-glx: for opencv
-# tesseract-ocr: for tesseract engine
+# libgl1: for opencv (replaces libgl1-mesa-glx)
+# libglib2.0-0: for opencv
+# libsm6, libxext6, libxrender1: additional opencv dependencies
 # libgomp1: for torch/paddle
-RUN apt-get update && apt-get install -y \
-    libgl1-mesa-glx \
+# tesseract-ocr: for tesseract engine
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
     libgomp1 \
     tesseract-ocr \
     tesseract-ocr-chi-sim \
