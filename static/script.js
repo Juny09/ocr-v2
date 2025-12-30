@@ -5,6 +5,7 @@ const previewArea = document.getElementById('previewArea');
 const imagePreview = document.getElementById('imagePreview');
 const preprocessToggle = document.getElementById('preprocessToggle');
 const langSelect = document.getElementById('langSelect');
+const cropBtn = document.getElementById('cropBtn');
 const changeBtn = document.getElementById('changeBtn');
 const convertBtn = document.getElementById('convertBtn');
 const btnText = document.getElementById('btnText');
@@ -47,6 +48,7 @@ function setupEventListeners() {
     uploadArea.addEventListener('drop', handleDrop);
     
     // Buttons
+    cropBtn.addEventListener('click', toggleCropMode);
     changeBtn.addEventListener('click', resetUpload);
     convertBtn.addEventListener('click', performOCR);
     copyBtn.addEventListener('click', copyToClipboard);
@@ -132,20 +134,39 @@ function validateAndPreviewFile(file) {
         uploadArea.classList.add('hidden');
         previewArea.classList.remove('hidden');
         
-        // Initialize Cropper
+        // Initialize Cropper (Optional: Start with crop mode off)
         if (cropper) {
             cropper.destroy();
+            cropper = null;
         }
+        cropBtn.textContent = 'Crop';
+        cropBtn.classList.remove('active');
+    };
+    reader.readAsDataURL(file);
+}
+
+function toggleCropMode() {
+    if (!imagePreview.src) return;
+
+    if (cropper) {
+        // Disable crop mode
+        cropper.destroy();
+        cropper = null;
+        cropBtn.textContent = 'Crop';
+        cropBtn.classList.remove('active');
+    } else {
+        // Enable crop mode
         cropper = new Cropper(imagePreview, {
             viewMode: 1,
-            autoCropArea: 1,
+            autoCropArea: 0.8,
             responsive: true,
             background: false,
             zoomable: false,
             scalable: false,
         });
-    };
-    reader.readAsDataURL(file);
+        cropBtn.textContent = 'Cancel Crop';
+        cropBtn.classList.add('active');
+    }
 }
 
 function resetUpload() {
@@ -153,6 +174,8 @@ function resetUpload() {
         cropper.destroy();
         cropper = null;
     }
+    cropBtn.textContent = 'Crop';
+    cropBtn.classList.remove('active');
     selectedFile = null;
     fileInput.value = '';
     imagePreview.src = '';

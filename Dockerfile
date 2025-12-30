@@ -5,7 +5,7 @@ FROM python:3.10-slim-bookworm
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PORT=8000 \
-    OCR_ENGINE=easyocr \
+    OCR_ENGINE=tesseract \
     PADDLE_USE_GPU=False \
     EASYOCR_USE_GPU=False
 
@@ -34,6 +34,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Install python dependencies
+# Install torch cpu only first to avoid massive CUDA binaries
+RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
 # Note: We install torch cpu version explicitly to save space if needed, 
 # but easyocr might override. For now, we trust requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
