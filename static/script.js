@@ -14,7 +14,6 @@ const resultText = document.getElementById('resultText');
 const copyBtn = document.getElementById('copyBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const charCount = document.getElementById('charCount');
-const engineInfo = document.getElementById('engineInfo');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toastMessage');
 const statusText = document.querySelector('.status-text');
@@ -62,7 +61,6 @@ async function checkAPIHealth() {
         
         if (data.status === 'healthy') {
             statusText.textContent = 'Ready';
-            engineInfo.textContent = `Engine: ${data.ocr_engine}`;
             try {
                 const engineName = String(data.ocr_engine || '').toLowerCase();
                 // PaddleOCR 和 EasyOCR 默认不使用预处理
